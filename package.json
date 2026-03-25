@@ -1,0 +1,12 @@
+{
+    "name": "com.enzisoft.nzcore.mvvm",
+    "displayName": "NZCore MVVM",
+    "version": "1.0.0",
+    "unity": "6000.3",
+    "dependencies": {
+        "com.enzisoft.nzcore": "1.1.3",
+        "com.enzisoft.sourcegenerator.common": "1.0.0"
+    },
+    "type": "library",
+    "description": "NZCore MVVM provides a framework to work with UITK/Burst/Entities easier."
+}
