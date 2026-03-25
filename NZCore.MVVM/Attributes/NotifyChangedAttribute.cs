@@ -1,0 +1,12 @@
+// <copyright project="NZCore.MVVM" file="ObservableObject.cs">
+// Copyright © 2025 Thomas Enzenebner. All rights reserved.
+// </copyright>
+
+using System;
+
+namespace NZCore.MVVM
+{
+    public class NotifyChangedAttribute : Attribute { }
+
+    public class NotifyPropertyChangedAttribute : Attribute { }
+}
