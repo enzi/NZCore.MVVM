@@ -2,8 +2,11 @@
 // Copyright © 2025 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
+using System;
 using NZCore.Inject;
 using UnityEngine;
+using UnityEngine.UIElements;
+using IServiceProvider = NZCore.Inject.IServiceProvider;
 
 namespace NZCore.MVVM
 {
@@ -11,12 +14,32 @@ namespace NZCore.MVVM
     /// Application-level MVVM services container that provides global dependency injection
     /// for the MVVM framework. This is the composition root for all MVVM services.
     /// </summary>
-    public class MVVMApplication
+    public class MvvmApplication
     {
-        private IServiceProvider _container;
+        public static MvvmApplication Instance;
 
-        public MVVMApplication()
+        private readonly UIDocument _uiDocument;
+        public event Action OnReady;
+
+        private IServiceProvider _container;
+        public UIRootContainer Container;
+        public UIToolkitService UIService;
+        private VisualAssetStore VisualAssetStore;
+
+        public MvvmApplication()
         {
+            Instance = this;
+
+            _container = new ServiceProvider();
+            _container.RegisterSingleton(_container); // register self
+            RegisterCoreServices();
+        }
+
+        public MvvmApplication(UIDocument uiDocument)
+        {
+            Instance = this;
+            _uiDocument = uiDocument;
+
             _container = new ServiceProvider();
             _container.RegisterSingleton(_container); // register self
             RegisterCoreServices();
@@ -36,6 +59,7 @@ namespace NZCore.MVVM
             // Core MVVM services
             _container.Register<IViewFactory, ViewFactory>(ServiceLifetime.Singleton);
             _container.Register<IViewModelManager, ViewModelManager>(ServiceLifetime.Singleton);
+            _container.Register<IVisualAssetStore, VisualAssetStore>(ServiceLifetime.Singleton);
 
             // Navigation services (placeholder)
 
@@ -67,6 +91,18 @@ namespace NZCore.MVVM
         /// <typeparam name="T">The type of service to resolve.</typeparam>
         /// <returns>The resolved service instance.</returns>
         public T GetService<T>() where T : class => _container.Resolve<T>();
+
+        public void InitializeRoot()
+        {
+            Container = new UIRootContainer(_uiDocument);
+
+            _container.RegisterSingleton(Container);
+            _container.Register<IUIToolkitService, UIToolkitService>(ServiceLifetime.Singleton);
+
+            UIService = (UIToolkitService) _container.Resolve<IUIToolkitService>();
+
+            OnReady?.Invoke();
+        }
 
         /// <summary>
         /// Clears the application services container. 

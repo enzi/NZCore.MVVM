@@ -13,16 +13,12 @@ namespace NZCore.MVVM
     {
         VisualTreeAsset GetAsset(string key);
         bool TryGetAsset(string key, out VisualTreeAsset vta);
+        void RegisterAssets(Dictionary<string, VisualTreeAsset> uiAssetsVisualTreeAssets);
     }
 
     public class VisualAssetStore : IVisualAssetStore
     {
-        private readonly Dictionary<string, VisualTreeAsset> _visualTreeAssets;
-
-        public VisualAssetStore(Dictionary<string, VisualTreeAsset> visualTreeAssets)
-        {
-            _visualTreeAssets = visualTreeAssets;
-        }
+        private readonly Dictionary<string, VisualTreeAsset> _visualTreeAssets = new();
 
         public VisualTreeAsset GetAsset(string key)
         {
@@ -38,6 +34,17 @@ namespace NZCore.MVVM
         public bool TryGetAsset(string key, out VisualTreeAsset vta)
         {
             return _visualTreeAssets.TryGetValue(key, out vta);
+        }
+
+        public void RegisterAssets(Dictionary<string, VisualTreeAsset> uiAssetsVisualTreeAssets)
+        {
+            foreach (var kvPair in uiAssetsVisualTreeAssets)
+            {
+                if (!_visualTreeAssets.TryAdd(kvPair.Key, kvPair.Value))
+                {
+                    Debug.LogError($"Duplicate key {kvPair.Key} in VisualAssetStore");
+                }
+            }
         }
     }
 }
