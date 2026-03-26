@@ -8,12 +8,12 @@ namespace NZCore.MVVM.Editor
 {
     public abstract class MVVMEditorApplication : EditorWindow
     {
-        protected MVVMApplication app;
+        protected MvvmApplication app;
         protected IViewFactory viewFactory;
 
         private void CreateGUI()
         {
-            app = new MVVMApplication();
+            app = new MvvmApplication();
             viewFactory = app.GetService<IViewFactory>();
 
             CreateView();
