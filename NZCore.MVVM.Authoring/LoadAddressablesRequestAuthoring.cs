@@ -18,7 +18,7 @@ namespace NZCore.UI.Authoring
             {
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponent(entity, new LoadAddressablesRequest()
+                AddComponent(entity, new LoadAddressablesRequest
                 {
                     PrintLoadedAssets = authoring.PrintLoadedAssets
                 });

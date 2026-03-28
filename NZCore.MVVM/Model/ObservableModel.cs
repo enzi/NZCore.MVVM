@@ -42,7 +42,7 @@ namespace NZCore.MVVM
         /// <summary>
         /// Initializes a new instance of the ObservableModel class.
         /// </summary>
-        protected ObservableModel() : base() { }
+        protected ObservableModel() { }
 
         /// <summary>
         /// Initializes a new instance of the ObservableModel class with a specific GUID.

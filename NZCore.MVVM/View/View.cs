@@ -23,9 +23,8 @@ namespace NZCore.MVVM
         /// </summary>
         public ViewModel ViewModel { get; private set; }
 
-        [Inject]
-        public IVisualAssetStore VisualAssetStore;
-        
+        [Inject] public IVisualAssetStore VisualAssetStore;
+
         /// <summary>
         /// Sibling Views whose removal lifecycle is coupled to this View's lifecycle.
         /// </summary>
@@ -48,7 +47,7 @@ namespace NZCore.MVVM
             }
 
             ViewModel = viewModel;
-            viewModel.AssociatedView = this;
+            viewModel.View = this;
             SetupDataBinding();
             InstantiateLayout();
             CreateView();
@@ -87,7 +86,7 @@ namespace NZCore.MVVM
             }
         }
 #endif
-        
+
         /// <summary>
         /// Loads and clones a UXML asset into this View.
         /// </summary>
@@ -154,21 +153,17 @@ namespace NZCore.MVVM
         public virtual void OnRemovedView() { }
 
         /// <summary>
-        /// Permanently deletes this View and its dependencies, propagating the deletion through the ViewModel and model layers.
-        /// Use this when the underlying data should be destroyed — e.g. a user deletes a node or wire.
-        /// <para>
-        /// The <paramref name="viewInitiator"/> identifies which ViewModel triggered the deletion.
-        /// Cascading deletes (e.g. a port deleting its connected wires) pass this parameter down so that
-        /// each dependent View can skip redundant cleanup on the initiator, preventing circular teardown.
-        /// </para>
+        /// Destroys this View, its ViewModel, and all dependencies. Use when the underlying data should be removed.
         /// </summary>
-        public abstract void DeleteView(ViewModel viewInitiator);
+        /// <param name="viewInitiator">The ViewModel that triggered the deletion. Dependencies use this to skip cleanup on the initiator and avoid circular teardown.</param>
+        /// <param name="cascadeSource">The parent ViewModel whose dependency teardown caused this deletion. <c>null</c> for top-level deletions. Use this to suppress side effects that only make sense for standalone deletions, e.g. don't recreate a default input node if the owning node is also being deleted.</param>
+        public abstract void DeleteView(ViewModel viewInitiator, ViewModel cascadeSource);
 
         /// <summary>
-        /// Called after this View has been deleted via DeleteView().
-        /// Override to synchronize the model layer — e.g. remove the corresponding data entry,
-        /// disconnect ports, or notify other systems that this element no longer exists.
+        /// Called by DeleteView after dependencies are torn down. Override to clean up the model layer.
         /// </summary>
-        public virtual void OnDeleteView(ViewModel viewInitiator) { }
+        /// <param name="viewInitiator">The ViewModel that triggered the deletion. Use to skip redundant cleanup on the initiator.</param>
+        /// <param name="cascadeSource">The parent ViewModel whose dependency teardown caused this deletion. <c>null</c> for top-level deletions. Use to suppress side effects that only apply to standalone deletions.</param>
+        public virtual void OnDeleteView(ViewModel viewInitiator, ViewModel cascadeSource) { }
     }
 }

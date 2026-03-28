@@ -24,7 +24,7 @@ namespace NZCore.MVVM
         private IServiceProvider _container;
         public UIRootContainer Container;
         public UIToolkitService UIService;
-        private VisualAssetStore VisualAssetStore;
+        public VisualAssetStore VisualAssetStore;
 
         public MvvmApplication()
         {
@@ -74,7 +74,7 @@ namespace NZCore.MVVM
         /// Call this during application startup after Initialize().
         /// </summary>
         /// <param name="registerAction">Action to register additional services.</param>
-        public void RegisterServices(System.Action<IServiceProvider> registerAction)
+        public void RegisterServices(Action<IServiceProvider> registerAction)
         {
             if (_container == null)
             {
@@ -110,7 +110,7 @@ namespace NZCore.MVVM
         /// </summary>
         public void Shutdown()
         {
-            if (_container is System.IDisposable disposable)
+            if (_container is IDisposable disposable)
             {
                 disposable.Dispose();
             }

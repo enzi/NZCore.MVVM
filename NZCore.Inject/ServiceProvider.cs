@@ -14,18 +14,18 @@ namespace NZCore.Inject
     /// </summary>
     public class ServiceProvider : IServiceProvider
     {
-        private readonly Dictionary<Type, IServiceDescriptor> serviceDescriptors = new();
-        private readonly Dictionary<Type, object> singletonInstances = new();
-        private readonly Dictionary<Type, object> scopedInstances = new();
-        private readonly IServiceProvider rootProvider;
-        private bool disposed;
+        private readonly Dictionary<Type, IServiceDescriptor> _serviceDescriptors = new();
+        private readonly Dictionary<Type, object> _singletonInstances = new();
+        private readonly Dictionary<Type, object> _scopedInstances = new();
+        private readonly IServiceProvider _rootProvider;
+        private bool _disposed;
 
         /// <summary>
         /// Creates a new root container.
         /// </summary>
         public ServiceProvider()
         {
-            rootProvider = this;
+            _rootProvider = this;
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace NZCore.Inject
         /// </summary>
         private ServiceProvider(IServiceProvider rootProvider)
         {
-            this.rootProvider = rootProvider;
+            this._rootProvider = rootProvider;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace NZCore.Inject
         /// </summary>
         public void Register(IServiceDescriptor descriptor)
         {
-            serviceDescriptors[descriptor.ServiceType] = descriptor;
+            _serviceDescriptors[descriptor.ServiceType] = descriptor;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace NZCore.Inject
         public void RegisterSingleton<TService>(TService instance) where TService : class
         {
             Register(new ServiceDescriptor(typeof(TService), typeof(TService), ServiceLifetime.Singleton, _ => instance));
-            singletonInstances[typeof(TService)] = instance;
+            _singletonInstances[typeof(TService)] = instance;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace NZCore.Inject
         /// </summary>
         public object Resolve(Type serviceType)
         {
-            if (!serviceDescriptors.TryGetValue(serviceType, out var descriptor))
+            if (!_serviceDescriptors.TryGetValue(serviceType, out var descriptor))
             {
                 throw new InvalidOperationException($"Service of type {serviceType.Name} is not registered.");
             }
@@ -90,7 +90,7 @@ namespace NZCore.Inject
         /// <summary>
         /// Creates a new scope.
         /// </summary>
-        public IServiceProvider CreateScope() => new ServiceProvider(rootProvider);
+        public IServiceProvider CreateScope() => new ServiceProvider(_rootProvider);
 
         /// <summary>
         /// Gets an instance of a service based on its descriptor.
@@ -111,14 +111,14 @@ namespace NZCore.Inject
         /// </summary>
         private object GetSingletonInstance(IServiceDescriptor descriptor)
         {
-            var rootContainer = (ServiceProvider)rootProvider;
-            if (rootContainer.singletonInstances.TryGetValue(descriptor.ServiceType, out var instance))
+            var rootContainer = (ServiceProvider)_rootProvider;
+            if (rootContainer._singletonInstances.TryGetValue(descriptor.ServiceType, out var instance))
             {
                 return instance;
             }
 
             instance = CreateInstance(descriptor);
-            rootContainer.singletonInstances[descriptor.ServiceType] = instance;
+            rootContainer._singletonInstances[descriptor.ServiceType] = instance;
             return instance;
         }
 
@@ -127,13 +127,13 @@ namespace NZCore.Inject
         /// </summary>
         private object GetScopedInstance(IServiceDescriptor descriptor)
         {
-            if (scopedInstances.TryGetValue(descriptor.ServiceType, out var instance))
+            if (_scopedInstances.TryGetValue(descriptor.ServiceType, out var instance))
             {
                 return instance;
             }
 
             instance = CreateInstance(descriptor);
-            scopedInstances[descriptor.ServiceType] = instance;
+            _scopedInstances[descriptor.ServiceType] = instance;
             return instance;
         }
 
@@ -240,15 +240,15 @@ namespace NZCore.Inject
         /// </summary>
         public void Dispose()
         {
-            if (disposed)
+            if (_disposed)
             {
                 return;
             }
 
-            disposed = true;
+            _disposed = true;
 
             // Dispose scoped instances that implement IDisposable
-            foreach (var instance in scopedInstances.Values)
+            foreach (var instance in _scopedInstances.Values)
             {
                 if (instance is IDisposable disposable)
                 {
@@ -257,10 +257,10 @@ namespace NZCore.Inject
             }
 
             // Only dispose singleton instances if this is the root container
-            if (this == rootProvider)
+            if (this == _rootProvider)
             {
-                var rootContainer = (ServiceProvider)rootProvider;
-                foreach (var instance in rootContainer.singletonInstances.Values)
+                var rootContainer = (ServiceProvider)_rootProvider;
+                foreach (var instance in rootContainer._singletonInstances.Values)
                 {
                     if (instance is IDisposable disposable)
                     {
@@ -269,7 +269,7 @@ namespace NZCore.Inject
                 }
             }
 
-            scopedInstances.Clear();
+            _scopedInstances.Clear();
         }
     }
 }

@@ -51,18 +51,18 @@ namespace NZCore.MVVM
             RemoveFromHierarchy();
         }
 
-        public override void DeleteView(ViewModel viewInitiator)
+        public override void DeleteView(ViewModel viewInitiator, ViewModel cascadeSource)
         {
             for (var i = Dependencies.Count - 1; i >= 0; i--)
             {
                 var dependency = Dependencies[i];
-                dependency.DeleteView(viewInitiator);
+                dependency.DeleteView(viewInitiator, ViewModel);
             }
 
             Dependencies.Clear();
 
-            ViewModel?.OnDeleteView(viewInitiator);
-            OnDeleteView(viewInitiator);
+            ViewModel?.OnDeleteView(viewInitiator, cascadeSource);
+            OnDeleteView(viewInitiator, cascadeSource);
 
             ViewModel?.OnUnregisterViewModel();
             _rootView?.RemoveChildView(this);

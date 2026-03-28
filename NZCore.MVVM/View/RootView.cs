@@ -119,7 +119,7 @@ namespace NZCore.MVVM
             ViewModel?.OnUnregisterViewModel();
         }
 
-        public override void DeleteView(ViewModel viewInitiator)
+        public override void DeleteView(ViewModel viewInitiator, ViewModel cascadeSource)
         {
             ViewModel?.OnUnregisterViewModel();
         }

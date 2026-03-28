@@ -20,6 +20,11 @@ namespace NZCore.MVVM
 
     public class AlsoNotifyAttribute : Attribute
     {
-        public AlsoNotifyAttribute(string propertyName) { }
+        public string PropertyName;
+
+        public AlsoNotifyAttribute(string propertyName)
+        {
+            PropertyName = propertyName;
+        }
     }
 }

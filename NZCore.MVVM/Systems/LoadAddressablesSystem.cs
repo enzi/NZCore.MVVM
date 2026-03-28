@@ -2,7 +2,6 @@
 // Copyright © 2026 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
-using System;
 using System.Collections.Generic;
 using NZCore.Hybrid;
 using NZCore.MVVM;

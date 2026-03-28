@@ -25,10 +25,5 @@ namespace NZCore.MVVM
         {
             ViewModelManager.UnregisterRootViewModel(this);
         }
-
-        protected override void OnDispose()
-        {
-            base.OnDispose();
-        }
     }
 }

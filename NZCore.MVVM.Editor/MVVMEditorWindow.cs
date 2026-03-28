@@ -6,15 +6,15 @@ using UnityEditor;
 
 namespace NZCore.MVVM.Editor
 {
-    public abstract class MVVMEditorApplication : EditorWindow
+    public abstract class MvvmEditorApplication : EditorWindow
     {
-        protected MvvmApplication app;
-        protected IViewFactory viewFactory;
+        protected MvvmApplication App;
+        protected IViewFactory ViewFactory;
 
         private void CreateGUI()
         {
-            app = new MvvmApplication();
-            viewFactory = app.GetService<IViewFactory>();
+            App = new MvvmApplication();
+            ViewFactory = App.GetService<IViewFactory>();
 
             CreateView();
         }

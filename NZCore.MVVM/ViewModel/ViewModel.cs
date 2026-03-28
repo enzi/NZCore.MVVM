@@ -36,7 +36,7 @@ namespace NZCore.MVVM
         /// The View associated with this ViewModel. Set by View.InitializeView().
         /// Used to forward model changes to the View layer.
         /// </summary>
-        public View AssociatedView { get; internal set; }
+        public View View { get; internal set; }
 
         /// <summary>
         /// Occurs when a property value changes.
@@ -109,7 +109,7 @@ namespace NZCore.MVVM
             }
 
             OnModelChanged(oldModel, _model);
-            AssociatedView?.OnModelChanged(oldModel, _model);
+            View?.OnModelChanged(oldModel, _model);
             OnPropertyChanged(nameof(Model));
         }
 
@@ -175,7 +175,7 @@ namespace NZCore.MVVM
         /// <summary>
         /// Called when the associated View's DeleteView() is invoked.
         /// </summary>
-        public virtual void OnDeleteView(ViewModel viewInitiator) { }
+        public virtual void OnDeleteView(ViewModel viewInitiator, ViewModel cascadeSource) { }
 
         /// <summary>
         /// Disposes the ViewModel and clears all resources.

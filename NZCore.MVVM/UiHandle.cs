@@ -147,7 +147,7 @@ namespace NZCore.MVVM
             if (_viewModelHandle.IsAllocated)
             {
                 viewModel = (TViewModel)_viewModelHandle.Target;
-                binding = viewModel as IDisposable;
+                binding = viewModel;
                 _viewModelHandle.Free();
                 _viewModelHandle = default;
                 _data = null;

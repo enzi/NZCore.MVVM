@@ -116,7 +116,7 @@ namespace NZCore.MVVM
         {
             if (string.IsNullOrEmpty(assetKey))
             {
-                return (_container.Root, default);
+                return (_container.Root, null);
             }
 
             if (TryLoad<T>(uniqueKey, assetKey, out var container, visibleOnInstantiate, elementName))
@@ -190,7 +190,7 @@ namespace NZCore.MVVM
         {
             if (string.IsNullOrEmpty(assetKey))
             {
-                return (_container.Root, default);
+                return (_container.Root, null);
             }
 
             if (TryLoad<T>(uniqueKey, assetKey, out var container, visibleOnInstantiate, elementName))

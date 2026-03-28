@@ -101,8 +101,10 @@ namespace NZCore.MVVM
             }
 
             RemoveModel(childViewModel.Model);
-            var childLookup = _childViewLookups[rootViewModel];
-            childLookup.Remove(childViewModel.Model.Guid);
+            
+            // commented out, removeModel already does this
+            //var childLookup = _childViewLookups[rootViewModel];
+            //childLookup.Remove(childViewModel.Model.Guid);
         }
 
         /// <summary>
