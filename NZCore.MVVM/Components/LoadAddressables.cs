@@ -3,9 +3,10 @@
 // </copyright>
 
 using System.Collections.Generic;
+using NZCore.UI;
 using Unity.Entities;
 
-namespace NZCore.UIToolkit.Data
+namespace NZCore.MVVM
 {
     public struct LoadAddressablesRequest : IComponentData
     {

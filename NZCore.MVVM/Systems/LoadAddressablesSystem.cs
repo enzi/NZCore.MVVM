@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using NZCore.Hybrid;
 using NZCore.MVVM;
-using NZCore.UIToolkit.Data;
+using NZCore.UI;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -30,10 +30,10 @@ namespace NZCore.UIToolkit.Systems
             var requestEntity = SystemAPI.GetSingletonEntity<LoadAddressablesRequest>();
             var request = SystemAPI.GetSingleton<LoadAddressablesRequest>();
             SystemAPI.ManagedAPI.TryGetSingleton(out LoadCustomUIAssetsRequest customAssetsRequest);
-            
+
             Enabled = false;
             LoadAsync(customAssetsRequest?.CustomAssets, request.PrintLoadedAssets);
-            
+
             EntityManager.DestroyEntity(requestEntity);
         }
 
@@ -76,10 +76,7 @@ namespace NZCore.UIToolkit.Systems
                 }
             }
 
-            MvvmApplication.Instance.RegisterServices(provider =>
-            {
-                provider.RegisterSingleton(uiAssets);
-            });
+            MvvmApplication.Instance.RegisterServices(provider => { provider.RegisterSingleton(uiAssets); });
 
             var visualAssetStore = MvvmApplication.Instance.GetService<IVisualAssetStore>();
             visualAssetStore.RegisterAssets(uiAssets.VisualTreeAssets);

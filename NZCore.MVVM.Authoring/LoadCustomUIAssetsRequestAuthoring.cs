@@ -3,7 +3,7 @@
 // </copyright>
 
 using System.Collections.Generic;
-using NZCore.UIToolkit.Data;
+using NZCore.MVVM;
 using Unity.Entities;
 using UnityEngine;
 
