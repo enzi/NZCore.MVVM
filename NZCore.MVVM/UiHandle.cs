@@ -40,8 +40,8 @@ namespace NZCore.MVVM
 
         public UiHandle(string uniqueKey, string assetKey, int priority = 0, bool visibleOnInstantiate = true)
         {
-            _uniqueKey = uniqueKey;
-            _assetKey = assetKey;
+            _uniqueKey = uniqueKey ?? new FixedString128Bytes();
+            _assetKey = assetKey ?? new FixedString128Bytes();
             _priority = priority;
             _visibleOnInstantiate = visibleOnInstantiate;
 
