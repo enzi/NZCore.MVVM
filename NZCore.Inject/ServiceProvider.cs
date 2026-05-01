@@ -67,6 +67,11 @@ namespace NZCore.Inject
         {
             Register(new ServiceDescriptor(typeof(TService), typeof(TService), ServiceLifetime.Singleton, _ => instance));
             _singletonInstances[typeof(TService)] = instance;
+            // Keep root cache in sync so re-registration on a scoped container doesn't return a stale instance
+            if (_rootProvider != this)
+            {
+                ((ServiceProvider)_rootProvider)._singletonInstances[typeof(TService)] = instance;
+            }
         }
 
         /// <summary>
