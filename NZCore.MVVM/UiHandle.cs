@@ -4,7 +4,6 @@
 
 #if UNITY_6000
 using System;
-using System.Runtime.InteropServices;
 using NZCore.UI;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -28,16 +27,7 @@ namespace NZCore.MVVM
         private readonly bool _visibleOnInstantiate;
 
         private TModel* _data;
-
-        private GCHandle _viewModelHandle;
-        private GCHandle _viewHandle;
-
-        private IntPtr _viewModelPtr;
-        private IntPtr _viewPtr;
-
-        public TViewModel ViewModel => (TViewModel)GCHandle.FromIntPtr(_viewModelPtr).Target;
-        public TView View => (TView)GCHandle.FromIntPtr(_viewPtr).Target;
-
+        
         public UiHandle(string uniqueKey, string assetKey, int priority = 0, bool visibleOnInstantiate = true)
         {
             _uniqueKey = uniqueKey ?? new FixedString128Bytes();
@@ -45,11 +35,7 @@ namespace NZCore.MVVM
             _priority = priority;
             _visibleOnInstantiate = visibleOnInstantiate;
 
-            _viewModelHandle = default;
-            _viewHandle = default;
             _data = null;
-            _viewModelPtr = default;
-            _viewPtr = default;
         }
 
         public ref TModel Model => ref UnsafeUtility.AsRef<TModel>(_data);
@@ -99,8 +85,18 @@ namespace NZCore.MVVM
         {
             MvvmApplication.Instance.UIService.RemovePanel(_uniqueKey.ToString());
 
-            var (viewModel, binding) = DetachHandles();
-            DisposeBinding(viewModel, binding);
+            if (_data == null)
+            {
+                return;
+            }
+
+            if (IViewModelBindingNotify.TryGet((IntPtr)_data, out var vm) && vm is TViewModel viewModel)
+            {
+                viewModel.Unload();
+                viewModel.Dispose(); // free the native TModel that _data points to
+            }
+
+            _data = null;
         }
 
         private (TView view, TViewModel viewModel) InternalCreateView(string elementName)
@@ -111,9 +107,7 @@ namespace NZCore.MVVM
             var viewModel = viewFactory.CreateViewModel<TViewModel>();
             viewModel.Load();
 
-            _viewModelHandle = GCHandle.Alloc(viewModel, GCHandleType.Pinned);
             _data = (TModel*)UnsafeUtility.AddressOf(ref viewModel.Value);
-            _viewModelPtr = GCHandle.ToIntPtr(_viewModelHandle);
 
             // Create and initialize View
             var assetKey = _assetKey.ToString();
@@ -126,40 +120,7 @@ namespace NZCore.MVVM
                 view.name = elementName;
             }
 
-            _viewHandle = GCHandle.Alloc(view, GCHandleType.Pinned);
-            _viewPtr = GCHandle.ToIntPtr(_viewHandle);
-
             return (view, viewModel);
-        }
-
-        /// <summary>Clears and returns the current GCHandle targets without disposing them.</summary>
-        private (TViewModel viewModel, IDisposable binding) DetachHandles()
-        {
-            TViewModel viewModel = null;
-            IDisposable binding = null;
-
-            if (_viewHandle.IsAllocated)
-            {
-                _viewHandle.Free();
-                _viewHandle = default;
-            }
-
-            if (_viewModelHandle.IsAllocated)
-            {
-                viewModel = (TViewModel)_viewModelHandle.Target;
-                binding = viewModel;
-                _viewModelHandle.Free();
-                _viewModelHandle = default;
-                _data = null;
-            }
-
-            return (viewModel, binding);
-        }
-
-        private static void DisposeBinding(TViewModel viewModel, IDisposable disposable)
-        {
-            viewModel?.Unload();
-            disposable?.Dispose();
         }
     }
 }
