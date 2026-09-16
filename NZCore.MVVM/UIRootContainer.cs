@@ -7,7 +7,10 @@ using UnityEngine.UIElements;
 
 namespace NZCore.MVVM
 {
-    public class UIRootContainer
+#if UNITY_6000_5_OR_NEWER
+    [Unity.Scripting.LifecycleManagement.AutoStaticsCleanup]
+#endif
+    public partial class UIRootContainer
     {
         public static UIRootContainer Instance;
 

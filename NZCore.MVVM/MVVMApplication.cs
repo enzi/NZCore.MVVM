@@ -14,7 +14,10 @@ namespace NZCore.MVVM
     /// Application-level MVVM services container that provides global dependency injection
     /// for the MVVM framework. This is the composition root for all MVVM services.
     /// </summary>
-    public class MvvmApplication
+#if UNITY_6000_5_OR_NEWER
+    [Unity.Scripting.LifecycleManagement.AutoStaticsCleanup]
+#endif
+    public partial class MvvmApplication
     {
         public static MvvmApplication Instance;
 
