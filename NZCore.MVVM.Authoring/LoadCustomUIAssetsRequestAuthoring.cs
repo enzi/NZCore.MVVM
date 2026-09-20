@@ -19,10 +19,21 @@ namespace NZCore.UI.Authoring
             {
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponentObject(entity, new LoadCustomUIAssetsRequest
+                var customAssets = AddBuffer<LoadCustomUIAssetsRequest>(entity);
+                if (authoring.CustomAssets == null)
                 {
-                    CustomAssets = authoring.CustomAssets
-                });
+                    return;
+                }
+
+                foreach (var customAsset in authoring.CustomAssets)
+                {
+                    DependsOn(customAsset.Asset);
+                    customAssets.Add(new LoadCustomUIAssetsRequest
+                    {
+                        Key = customAsset.Key,
+                        Asset = customAsset.Asset
+                    });
+                }
             }
         }
     }

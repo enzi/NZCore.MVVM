@@ -2,9 +2,9 @@
 // Copyright © 2026 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
-using System.Collections.Generic;
-using NZCore.UI;
+using Unity.Collections;
 using Unity.Entities;
+using UnityEngine.UIElements;
 
 namespace NZCore.MVVM
 {
@@ -13,8 +13,9 @@ namespace NZCore.MVVM
         public bool PrintLoadedAssets;
     }
 
-    public class LoadCustomUIAssetsRequest : IComponentData
+    public struct LoadCustomUIAssetsRequest : IBufferElementData
     {
-        public List<CustomUIAsset> CustomAssets = new();
+        public FixedString128Bytes Key;
+        public UnityObjectRef<VisualTreeAsset> Asset;
     }
 }

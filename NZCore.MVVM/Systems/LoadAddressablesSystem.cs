@@ -29,10 +29,23 @@ namespace NZCore.UIToolkit.Systems
         {
             var requestEntity = SystemAPI.GetSingletonEntity<LoadAddressablesRequest>();
             var request = SystemAPI.GetSingleton<LoadAddressablesRequest>();
-            SystemAPI.ManagedAPI.TryGetSingleton(out LoadCustomUIAssetsRequest customAssetsRequest);
+            List<CustomUIAsset> customAssets = null;
+            if (SystemAPI.TryGetSingletonBuffer<LoadCustomUIAssetsRequest>(out var customAssetsRequest, true))
+            {
+                // Resolve the buffer before destroying the request entity or awaiting asset loads.
+                customAssets = new List<CustomUIAsset>(customAssetsRequest.Length);
+                foreach (var customAsset in customAssetsRequest)
+                {
+                    customAssets.Add(new CustomUIAsset
+                    {
+                        Key = customAsset.Key.ToString(),
+                        Asset = customAsset.Asset.Value
+                    });
+                }
+            }
 
             Enabled = false;
-            LoadAsync(customAssetsRequest?.CustomAssets, request.PrintLoadedAssets);
+            LoadAsync(customAssets, request.PrintLoadedAssets);
 
             EntityManager.DestroyEntity(requestEntity);
         }
