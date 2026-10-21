@@ -8,5 +8,8 @@
         "com.enzisoft.sourcegenerator.common": "1.0.0"
     },
     "type": "library",
-    "description": "NZCore MVVM provides a framework to work with UITK/Burst/Entities easier."
+    "description": "NZCore MVVM provides a framework to work with UITK/Burst/Entities easier.",
+    "author": {
+        "name": "Enzisoft"
+    }
 }
