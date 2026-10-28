@@ -9,8 +9,7 @@
         "NZCore",
         "NZCore.Inject",
         "NZCore.UI",
-        "Unity.Entities.Hybrid",
-        "NZCore.Hybrid.Data"
+        "Unity.Entities.Hybrid"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
